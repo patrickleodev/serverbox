@@ -4,28 +4,28 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Sobre nós | ServeBox",
   description:
-    "Conheça a ServeBox, uma operação de reposição e venda de tubos de tênis para condomínios.",
+    "Conheça a ServeBox, a forma simples de encontrar tubos de tênis para continuar jogando.",
 };
 
 const principles = [
   {
-    title: "Reposição sem ruído",
-    text: "A rotina do condomínio já tem muitas frentes acontecendo ao mesmo tempo. A ServeBox entra para cuidar dos tubos de tênis com clareza, previsibilidade e menos trabalho manual para quem administra.",
+    title: "Jogo sem improviso",
+    text: "Você não precisa interromper uma partida ou adiar o próximo treino por falta de bolas. A ServeBox aproxima os tubos de tênis de quem realmente vai usá-los.",
   },
   {
-    title: "Planos com contexto",
-    text: "Cada condomínio tem seu próprio ritmo de uso das quadras. Por isso, os planos são pensados a partir da realidade de cada operação, em vez de seguir uma tabela genérica que ignora consumo, frequência e preferência dos moradores.",
+    title: "Escolha que combina com você",
+    text: "Cada jogador tem uma rotina, um ritmo e uma preferência. Por isso, trabalhamos com opções que fazem sentido para diferentes frequências de jogo e marcas de tubos.",
   },
   {
-    title: "Pagamento acompanhado",
-    text: "A cobrança fica integrada ao fluxo de compra e o saldo só muda quando o pagamento é confirmado. Assim, a gestão comercial conversa com o estoque sem depender de conferências paralelas.",
+    title: "Tudo mais simples",
+    text: "Da escolha ao acompanhamento do seu saldo, a experiência foi pensada para ser clara. Menos tempo resolvendo detalhes e mais tempo em quadra.",
   },
 ];
 
 const workflow = [
-  "Entendemos como o condomínio usa as quadras e quais marcas fazem sentido para aquele público.",
-  "Organizamos planos e compras avulsas de uma forma simples para o administrador manter a oferta atualizada.",
-  "Acompanhamos cobranças, confirmações e reposições para que a experiência nas quadras continue fluida.",
+  "Você encontra tubos disponíveis no seu condomínio, perto da quadra e da próxima partida.",
+  "Escolhe a opção que combina com seu jogo, sua frequência e suas preferências.",
+  "Acompanha seus planos e compras com clareza, para manter a raquete pronta para o próximo set.",
 ];
 
 export default function SobreNosPage() {
@@ -39,29 +39,27 @@ export default function SobreNosPage() {
 
           <div className="mt-8 max-w-3xl space-y-6">
             <h1 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
-              Tubos de tênis sempre à mão, sem transformar a gestão em planilha.
+              Seu próximo jogo começa com um tubo de tênis à mão.
             </h1>
             <p className="text-base leading-8 text-slate-600 sm:text-lg">
-              A ServeBox nasceu para aproximar a compra de tubos da rotina real
-              dos condomínios. Em vez de tratar a operação como um painel cheio
-              de números, cuidamos do que importa no dia a dia: disponibilidade,
-              reposição, cobrança clara e uma experiência mais tranquila para
-              administradores e moradores.
+              A ServeBox nasceu para deixar mais fácil encontrar tubos de tênis
+              quando você quer jogar. No seu condomínio, você escolhe o que faz
+              sentido para a sua rotina e mantém a próxima partida em movimento.
             </p>
             <p className="text-base leading-8 text-slate-600 sm:text-lg">
-              Nosso trabalho combina serviço, organização e tecnologia. A parte
-              técnica fica nos bastidores; para o condomínio, a sensação deve ser
-              de simplicidade: saber o que está disponível, escolher o melhor
-              plano e seguir com as quadras prontas para uso.
+              Nosso trabalho combina disponibilidade, organização e tecnologia.
+              A parte técnica fica nos bastidores; para você, a experiência deve
+              ser simples: encontrar seu tubo, escolher seu plano e voltar para a
+              quadra.
             </p>
           </div>
 
           <div className="mt-8 flex flex-col gap-4 sm:flex-row">
             <Link
-              href="/login"
+              href="/cliente/login"
               className="inline-flex h-12 w-full items-center justify-center rounded-full bg-blue-600 px-5 text-sm font-semibold !text-white transition hover:bg-blue-500 sm:w-auto"
             >
-              Entrar como admin
+              Acessar área do cliente
             </Link>
             <Link
               href="/sugestoes"
@@ -78,15 +76,14 @@ export default function SobreNosPage() {
           </p>
           <div className="mt-6 space-y-5 text-base leading-8 text-slate-700">
             <p>
-              Um bom serviço para quadras não aparece apenas na hora da venda.
-              Ele aparece quando o morador encontra tubos disponíveis, quando o
-              administrador entende o que foi comprado e quando a reposição deixa
-              de depender de mensagens soltas.
+              Um bom serviço para quadras aparece quando você encontra tubos
+              disponíveis, escolhe o que prefere e consegue voltar a jogar sem
+              transformar a compra em uma tarefa.
             </p>
             <p>
-              Por isso, pensamos a ServeBox como uma operação próxima: prática o
-              bastante para caber na rotina do condomínio e cuidadosa o bastante
-              para não deixar o esporte virar mais uma pendência administrativa.
+              Por isso, pensamos a ServeBox para acompanhar a sua rotina: prática
+              o bastante para caber entre uma partida e outra e cuidadosa o
+              bastante para deixar o esporte no centro da experiência.
             </p>
           </div>
         </aside>
@@ -98,7 +95,7 @@ export default function SobreNosPage() {
             Como trabalhamos
           </p>
           <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900">
-            Uma operação pensada para a rotina de quem cuida das quadras.
+            Tudo pensado para a rotina de quem joga.
           </h2>
           <div className="mt-6 space-y-4 text-base leading-8 text-slate-700">
             {workflow.map((item) => (
@@ -129,14 +126,13 @@ export default function SobreNosPage() {
             Próximo passo
           </p>
           <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900">
-            Queremos que a compra de tubos pareça parte natural da vida do
-            condomínio.
+            Queremos que comprar tubos seja parte natural da sua rotina de jogo.
           </h2>
           <p className="mt-5 text-base leading-8 text-slate-600 sm:text-lg">
             A página de sugestões existe para manter essa construção aberta. Se
-            algo pode ficar mais claro, mais simples ou mais útil para o seu
-            condomínio, a equipe pode avaliar e transformar essa percepção em
-            melhoria do serviço.
+            algo pode ficar mais claro, mais simples ou mais útil para você e
+            seus jogos, a equipe pode transformar essa percepção em melhoria do
+            serviço.
           </p>
           <div className="mt-7">
             <Link

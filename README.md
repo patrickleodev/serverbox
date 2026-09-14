@@ -139,6 +139,21 @@ INFINITEPAY_WEBHOOK_SECRET=um_segredo_opcional
 Se `INFINITEPAY_WEBHOOK_SECRET` for configurado, o projeto envia esse segredo
 na URL do webhook e exige o mesmo valor para aceitar a notificacao.
 
+### Notificacoes de sugestoes por e-mail
+
+As sugestoes sao enviadas para `serveboxsuporte@gmail.com` usando a API do
+Resend. Configure as variaveis no ambiente da aplicacao:
+
+```bash
+RESEND_API_KEY=re_sua_chave
+RESEND_FROM_EMAIL=onboarding@resend.dev
+SUGGESTIONS_NOTIFICATION_EMAIL=serveboxsuporte@gmail.com
+```
+
+Em producao, prefira um remetente de um dominio verificado no Resend no lugar
+de `onboarding@resend.dev`. O e-mail informado pela pessoa fica configurado
+como `Reply-To` para facilitar o retorno.
+
 ### Santander
 
 No Portal do Desenvolvedor Santander:

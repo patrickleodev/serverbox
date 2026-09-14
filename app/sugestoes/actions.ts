@@ -4,13 +4,16 @@ import { revalidatePath } from "next/cache";
 
 import { getDataSource } from "@/lib/db/data-source";
 import { SuggestionEntity } from "@/lib/db/entities/suggestion.entity";
+import { sendSuggestionNotification } from "@/lib/email/resend";
 
 const RESIDENT_NAME_MAX_LENGTH = 120;
+const EMAIL_MAX_LENGTH = 254;
 const CONDOMINIUM_NAME_MAX_LENGTH = 160;
 const SUGGESTION_MAX_LENGTH = 200;
 
 type SuggestionFieldErrors = {
   residentName?: string;
+  email?: string;
   condominiumName?: string;
   message?: string;
 };
@@ -56,11 +59,30 @@ function validateRequiredText(
   return null;
 }
 
+function validateEmail(value: string) {
+  const requiredError = validateRequiredText(
+    value,
+    "E-mail para contato",
+    EMAIL_MAX_LENGTH,
+  );
+
+  if (requiredError) {
+    return requiredError;
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+    return "Informe um e-mail válido.";
+  }
+
+  return null;
+}
+
 export async function createSuggestionAction(
   _previousState: CreateSuggestionActionState,
   formData: FormData,
 ): Promise<CreateSuggestionActionState> {
   const residentName = normalizeSingleLineField(formData.get("residentName"));
+  const email = normalizeSingleLineField(formData.get("email"));
   const condominiumName = normalizeSingleLineField(
     formData.get("condominiumName"),
   );
@@ -72,6 +94,7 @@ export async function createSuggestionAction(
     "Nome",
     RESIDENT_NAME_MAX_LENGTH,
   );
+  const emailError = validateEmail(email);
   const condominiumNameError = validateRequiredText(
     condominiumName,
     "Condomínio",
@@ -85,6 +108,10 @@ export async function createSuggestionAction(
 
   if (residentNameError) {
     fieldErrors.residentName = residentNameError;
+  }
+
+  if (emailError) {
+    fieldErrors.email = emailError;
   }
 
   if (condominiumNameError) {
@@ -108,9 +135,28 @@ export async function createSuggestionAction(
 
   await suggestionRepository.save({
     residentName,
+    email,
     condominiumName,
     message: suggestionMessage,
   });
+
+  try {
+    await sendSuggestionNotification({
+      residentName,
+      email,
+      condominiumName,
+      message: suggestionMessage,
+    });
+  } catch (error) {
+    console.error("[suggestions] notification email failed", error);
+
+    return {
+      success: false,
+      message:
+        "Sugestão registrada, mas não foi possível enviar o e-mail de notificação.",
+      fieldErrors: {},
+    };
+  }
 
   revalidatePath("/sugestoes");
 

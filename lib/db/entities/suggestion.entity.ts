@@ -3,6 +3,7 @@ import { EntitySchema } from "typeorm";
 export type Suggestion = {
   id: string;
   residentName: string;
+  email: string | null;
   condominiumName: string;
   message: string;
   createdAt: Date;
@@ -21,6 +22,11 @@ export const SuggestionEntity = new EntitySchema<Suggestion>({
     residentName: {
       type: String,
       length: 120,
+    },
+    email: {
+      type: String,
+      length: 254,
+      nullable: true,
     },
     condominiumName: {
       type: String,

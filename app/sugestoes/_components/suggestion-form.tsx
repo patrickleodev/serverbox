@@ -41,6 +41,7 @@ export function SuggestionForm() {
   }, [state.success]);
 
   const residentNameErrorId = "residentName-error";
+  const emailErrorId = "suggestion-email-error";
   const condominiumNameErrorId = "condominiumName-error";
   const messageErrorId = "suggestion-message-error";
 
@@ -63,6 +64,23 @@ export function SuggestionForm() {
           id={residentNameErrorId}
           message={state.fieldErrors.residentName}
         />
+      </div>
+
+      <div>
+        <FloatingInput
+          label="E-mail para contato"
+          name="email"
+          type="email"
+          autoComplete="email"
+          placeholder="seu@email.com"
+          maxLength={254}
+          required
+          aria-invalid={Boolean(state.fieldErrors.email) || undefined}
+          aria-describedby={
+            state.fieldErrors.email ? emailErrorId : undefined
+          }
+        />
+        <FieldError id={emailErrorId} message={state.fieldErrors.email} />
       </div>
 
       <div>

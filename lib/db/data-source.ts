@@ -361,11 +361,16 @@ async function ensurePostgresRuntimeSchema(dataSource: DataSource) {
     CREATE TABLE IF NOT EXISTS suggestions (
       id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
       "residentName" character varying(120) NOT NULL,
+      email character varying(254),
       "condominiumName" character varying(160) NOT NULL,
       message text NOT NULL,
       "createdAt" timestamp without time zone NOT NULL DEFAULT now(),
       "updatedAt" timestamp without time zone NOT NULL DEFAULT now()
     )
+  `);
+  await dataSource.query(`
+    ALTER TABLE suggestions
+      ADD COLUMN IF NOT EXISTS email character varying(254)
   `);
   await dataSource.query(`
     INSERT INTO condominium_court_tube_brands ("courtId", "tubeBrandId")

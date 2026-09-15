@@ -31,6 +31,7 @@ const entities = [
 ];
 const DEFAULT_ADMIN_NAME = "Operacao ServeBox";
 const DEFAULT_ADMIN_EMAIL = "admin@servebox.local";
+const LEGACY_ADMIN_EMAIL = "admin@serverbox.local";
 const DEFAULT_TUBE_BRANDS = ["Wilson", "Tecnifibre"];
 const KEY_LENGTH = 64;
 
@@ -100,6 +101,16 @@ async function seedMinimumProductionData(dataSource: DataSource) {
   });
 
   if (existingAdministrator) {
+    return;
+  }
+
+  const legacyAdministrator = await administratorRepository.findOneBy({
+    email: LEGACY_ADMIN_EMAIL,
+  });
+
+  if (legacyAdministrator) {
+    legacyAdministrator.email = adminEmail;
+    await administratorRepository.save(legacyAdministrator);
     return;
   }
 

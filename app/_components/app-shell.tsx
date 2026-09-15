@@ -112,7 +112,7 @@ export function AppShell({ children, condominiums }: AppShellProps) {
       const response = await fetch("/api/auth/session", {
         cache: "no-store",
         headers: {
-          "x-serverbox-session-token": sessionToken,
+          "x-servebox-session-token": sessionToken,
         },
       }).catch(() => null);
 

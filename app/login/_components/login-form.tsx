@@ -52,7 +52,7 @@ export function LoginForm() {
         name="email"
         type="email"
         autoComplete="email"
-        placeholder="admin@serverbox.local"
+        placeholder="admin@servebox.local"
       />
 
       <FloatingInput

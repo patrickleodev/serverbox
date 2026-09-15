@@ -60,7 +60,7 @@ export function getSessionTokenFromRequest(request: Request) {
     return authorizationHeader.slice(7).trim() || null;
   }
 
-  const customHeader = request.headers.get("x-serverbox-session-token") ?? "";
+  const customHeader = request.headers.get("x-servebox-session-token") ?? "";
 
   if (customHeader.trim()) {
     return customHeader.trim();

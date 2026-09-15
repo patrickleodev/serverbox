@@ -1,7 +1,7 @@
 {
   "info": {
     "_postman_id": "fb1cc8eb-0f7d-4611-a0a8-9086eb13f997",
-    "name": "ServerBox - Santander Pix",
+    "name": "ServeBox - Santander Pix",
     "description": "Santander Pix COB sandbox/production diagnostics. Import the environment template and configure the client certificate in Postman before running.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -236,7 +236,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"calendario\": {\n    \"expiracao\": 3600\n  },\n  \"devedor\": {\n    \"cnpj\": \"{{payer_tax_id}}\",\n    \"nome\": \"{{payer_name}}\"\n  },\n  \"valor\": {\n    \"original\": \"1.00\"\n  },\n  \"chave\": \"{{pix_key}}\",\n  \"solicitacaoPagador\": \"ServerBox teste {{txid}}\",\n  \"infoAdicionais\": [\n    {\n      \"nome\": \"Referencia\",\n      \"valor\": \"{{txid}}\"\n    },\n    {\n      \"nome\": \"Tipo\",\n      \"valor\": \"teste sandbox\"\n    }\n  ]\n}",
+          "raw": "{\n  \"calendario\": {\n    \"expiracao\": 3600\n  },\n  \"devedor\": {\n    \"cnpj\": \"{{payer_tax_id}}\",\n    \"nome\": \"{{payer_name}}\"\n  },\n  \"valor\": {\n    \"original\": \"1.00\"\n  },\n  \"chave\": \"{{pix_key}}\",\n  \"solicitacaoPagador\": \"ServeBox teste {{txid}}\",\n  \"infoAdicionais\": [\n    {\n      \"nome\": \"Referencia\",\n      \"valor\": \"{{txid}}\"\n    },\n    {\n      \"nome\": \"Tipo\",\n      \"valor\": \"teste sandbox\"\n    }\n  ]\n}",
           "options": {
             "raw": {
               "language": "json"

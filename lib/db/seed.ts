@@ -22,6 +22,7 @@ const administratorSeed = {
   name: "Operação ServeBox",
   email: "admin@servebox.local",
 };
+const LEGACY_ADMIN_EMAIL = "admin@serverbox.local";
 
 const DEV_SEED_REFERENCE_PREFIX = "dev-seed-";
 const DEV_SEED_REASON_PREFIX = "DEV_SEED:";
@@ -454,7 +455,7 @@ async function seedDevelopmentDatabase(
       pixQrCode: `https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${fixture.reference}`,
       pixCopyPasteCode: `00020126580014BR.GOV.BCB.PIX0136${fixture.reference}520400005303986540${String(
         (fixture.amountInCents / 100).toFixed(2),
-      ).replace(".", "")}5802BR5909SERVERBOX6009SAOPAULO62070503***6304ABCD`,
+      ).replace(".", "")}5802BR5909SERVEBOX6009SAOPAULO62070503***6304ABCD`,
       pixExpiresAt: isPending
         ? new Date(createdAt.getTime() + 1000 * 60 * 60 * 72)
         : null,
@@ -512,6 +513,17 @@ export async function seedDatabase(dataSource: DataSource) {
   let administrator = await administratorRepository.findOneBy({
     email: administratorSeed.email,
   });
+
+  if (!administrator) {
+    const legacyAdministrator = await administratorRepository.findOneBy({
+      email: LEGACY_ADMIN_EMAIL,
+    });
+
+    if (legacyAdministrator) {
+      legacyAdministrator.email = administratorSeed.email;
+      administrator = await administratorRepository.save(legacyAdministrator);
+    }
+  }
 
   if (!administrator) {
     administrator = await administratorRepository.save({

@@ -117,7 +117,7 @@ function buildDevelopmentTransparentCharge(
     amount: input.amountInCents,
     status: "PENDING",
     devMode: true,
-    brCode: `DEV-SERVERBOX-PIX:${input.reference}:${input.amountInCents}`,
+    brCode: `DEV-SERVEBOX-PIX:${input.reference}:${input.amountInCents}`,
     brCodeBase64: null,
     expiresAt: new Date(
       Date.now() + ABACATEPAY_DEFAULT_PIX_EXPIRATION_IN_SECONDS * 1000,

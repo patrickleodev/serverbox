@@ -162,7 +162,7 @@ export async function createSuggestionAction(
 
   return {
     success: true,
-    message: "Sugestão enviada. Obrigado por ajudar a melhorar a ServerBox.",
+    message: "Sugestão enviada. Obrigado por ajudar a melhorar a ServeBox.",
     fieldErrors: {},
   };
 }

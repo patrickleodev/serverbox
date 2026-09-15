@@ -171,7 +171,7 @@ export function AppSidebar({ condominiums }: AppSidebarProps) {
       <aside className="app-sidebar hidden lg:fixed lg:top-4 lg:bottom-4 lg:left-4 lg:z-30 lg:flex lg:w-[18.5rem] lg:flex-col lg:gap-6 lg:overflow-y-auto lg:rounded-[1.75rem] lg:border lg:border-border lg:bg-white/90 lg:px-5 lg:py-6 lg:backdrop-blur">
         <div>
           <p className="text-sm uppercase tracking-[0.24em] text-slate-500">
-            ServerBox
+            ServeBox
           </p>
           <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">
             Navegação

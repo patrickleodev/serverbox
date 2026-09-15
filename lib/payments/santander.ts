@@ -444,7 +444,7 @@ function getPayerName(customer: CreatePixChargeInput["customer"]) {
   return (
     getTrimmedEnv("SANTANDER_DEFAULT_PAYER_NAME") ||
     customer.name.trim() ||
-    "ServerBox"
+    "ServeBox"
   );
 }
 
@@ -578,7 +578,7 @@ function buildSolicitacaoPagador(
     ? ` ${metadata.paymentType.replace(/_/g, " ")}`
     : "";
 
-  return `ServerBox${paymentType} ${reference}`.slice(0, 140);
+  return `ServeBox${paymentType} ${reference}`.slice(0, 140);
 }
 
 function buildInfoAdicionais(

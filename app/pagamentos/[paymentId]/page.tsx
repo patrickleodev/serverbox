@@ -68,7 +68,7 @@ export default async function PaymentPage({
                 {isInfinitePayCheckout ? "Pague pela InfinitePay" : "Pague com PIX"}
               </p>
               <h2 className="payment-print-only mt-2 text-2xl font-semibold text-slate-900">
-                Pagamento ServerBox
+                Pagamento ServeBox
               </h2>
             </div>
             {qrCodeSvg || payment.pixQrCode?.startsWith("data:image/") ? (

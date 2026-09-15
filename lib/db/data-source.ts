@@ -21,7 +21,7 @@ import { getTubeStockEntries } from "@/lib/domain/tube-stock";
 import { DataSource, type DataSourceOptions } from "typeorm";
 
 declare global {
-  var __serverboxDataSourceCache:
+  var __serveboxDataSourceCache:
     | {
         version: string;
         promise: Promise<DataSource>;
@@ -97,10 +97,10 @@ function isProductionBuild() {
 }
 
 function getDatabasePath() {
-  const databaseFilename = ormConfig.database ?? process.env.DB_FILENAME ?? "serverbox.sqlite";
+  const databaseFilename = ormConfig.database ?? process.env.DB_FILENAME ?? "servebox.sqlite";
 
   return isVercelRuntime()
-    ? path.join("/tmp", "serverbox", databaseFilename)
+    ? path.join("/tmp", "servebox", databaseFilename)
     : path.join(process.cwd(), "data", databaseFilename);
 }
 
@@ -478,7 +478,7 @@ async function createDataSource() {
 }
 
 export async function getDataSource(): Promise<DataSource> {
-  const cached = globalThis.__serverboxDataSourceCache;
+  const cached = globalThis.__serveboxDataSourceCache;
 
   if (!cached || cached.version !== DATA_SOURCE_SCHEMA_VERSION) {
     if (cached) {
@@ -493,11 +493,11 @@ export async function getDataSource(): Promise<DataSource> {
         });
     }
 
-    globalThis.__serverboxDataSourceCache = {
+    globalThis.__serveboxDataSourceCache = {
       version: DATA_SOURCE_SCHEMA_VERSION,
       promise: createDataSource(),
     };
   }
 
-  return globalThis.__serverboxDataSourceCache!.promise;
+  return globalThis.__serveboxDataSourceCache!.promise;
 }

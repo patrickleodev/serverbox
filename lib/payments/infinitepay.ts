@@ -123,7 +123,7 @@ function buildCheckoutDescription(
   const tubeBrandName = metadata?.tubeBrandName;
   const ballQuantity = metadata?.ballQuantity;
   const parts = [
-    "ServerBox",
+    "ServeBox",
     paymentType,
     tubeBrandName,
     ballQuantity ? `${ballQuantity} tubos` : null,

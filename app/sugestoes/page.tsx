@@ -4,9 +4,9 @@ import Link from "next/link";
 import { SuggestionForm } from "@/app/sugestoes/_components/suggestion-form";
 
 export const metadata: Metadata = {
-  title: "Sugestões | ServerBox",
+  title: "Sugestões | ServeBox",
   description:
-    "Envie sugestões para melhorar a experiência ServerBox no seu condomínio.",
+    "Envie sugestões para melhorar a experiência ServeBox no seu condomínio.",
 };
 
 export default function SugestoesPage() {
@@ -19,7 +19,7 @@ export default function SugestoesPage() {
 
         <div className="mt-7 max-w-2xl space-y-5">
           <h1 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
-            Conte o que deixaria a ServerBox melhor para o seu condomínio.
+            Conte o que deixaria a ServeBox melhor para o seu condomínio.
           </h1>
           <p className="text-base leading-8 text-slate-600 sm:text-lg">
             Sua ideia fica registrada para a equipe avaliar melhorias no serviço,

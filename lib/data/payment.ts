@@ -45,7 +45,7 @@ export async function getPaymentDetails(paymentId: string) {
   }
 
   const syncedPayment =
-    payment.status === PaymentStatus.PENDING
+    payment.status === PaymentStatus.PENDING && !payment.isArchived
       ? await syncPixPayment({ paymentId })
       : payment;
   const freshPayment = await expirePaymentIfNeeded(syncedPayment ?? payment);
@@ -54,6 +54,7 @@ export async function getPaymentDetails(paymentId: string) {
     id: freshPayment.id,
     reference: freshPayment.reference,
     status: freshPayment.status,
+    isArchived: freshPayment.isArchived,
     method: freshPayment.method,
     amountInCents: freshPayment.amountInCents,
     ballQuantity: freshPayment.ballQuantity,

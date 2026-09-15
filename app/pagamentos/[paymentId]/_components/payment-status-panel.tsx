@@ -8,6 +8,7 @@ type PaymentDetails = {
   id: string;
   reference: string;
   status: PaymentStatus;
+  isArchived: boolean;
   amountInCents: number;
   ballQuantity: number;
   tubeBrandId: string | null;
@@ -52,7 +53,7 @@ export function PaymentStatusPanel({
     payment.provider === "abacatepay" && Boolean(payment.providerDevMode);
 
   useEffect(() => {
-    if (payment.status !== "pending") {
+    if (payment.status !== "pending" || payment.isArchived) {
       return;
     }
 
@@ -72,7 +73,7 @@ export function PaymentStatusPanel({
     return () => {
       window.clearInterval(interval);
     };
-  }, [payment.id, payment.status]);
+  }, [payment.id, payment.isArchived, payment.status]);
 
   useEffect(() => {
     if (!copied) {
@@ -154,10 +155,12 @@ export function PaymentStatusPanel({
             Status da cobrança
           </p>
           <h2 className="mt-2 text-2xl font-semibold text-slate-900 sm:text-3xl">
-            {statusLabels[payment.status]}
+            {payment.isArchived ? "Cobrança arquivada" : statusLabels[payment.status]}
           </h2>
           <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-600">
-            {payment.status === "pending"
+            {payment.isArchived
+              ? "Esta cobrança foi arquivada e não será sincronizada automaticamente."
+              : payment.status === "pending"
               ? checkoutUrl
                 ? "Abra o checkout da InfinitePay. O saldo só deve ser liberado depois que o gateway confirmar o pagamento."
                 : "O saldo só deve ser liberado depois que o gateway confirmar o pagamento deste PIX."
@@ -191,7 +194,11 @@ export function PaymentStatusPanel({
         <div className="rounded-[1.25rem] border border-border bg-slate-50 p-4">
           <p className="text-sm text-slate-500">Liberação</p>
           <p className="mt-2 text-lg font-semibold text-slate-900">
-            {payment.status === "paid" ? "Saldo liberado" : "Aguardando"}
+            {payment.isArchived
+              ? "Arquivada"
+              : payment.status === "paid"
+                ? "Saldo liberado"
+                : "Aguardando"}
           </p>
         </div>
       </div>
@@ -241,7 +248,9 @@ export function PaymentStatusPanel({
             <button
               type="button"
               onClick={simulatePayment}
-              disabled={isSimulating || payment.status !== "pending"}
+              disabled={
+                isSimulating || payment.status !== "pending" || payment.isArchived
+              }
               className="inline-flex h-11 w-full items-center justify-center rounded-full bg-slate-900 px-5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
             >
               {isSimulating ? "Simulando..." : "Simular pagamento"}

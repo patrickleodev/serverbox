@@ -4,6 +4,7 @@ import type { Condominium } from "@/lib/db/entities/condominium.entity";
 
 export enum PaymentMethod {
   PIX = "pix",
+  MANUAL = "manual",
 }
 
 export enum PaymentStatus {
@@ -25,6 +26,7 @@ export type CondominiumPayment = {
   reference: string;
   method: PaymentMethod;
   status: PaymentStatus;
+  isArchived: boolean;
   amountInCents: number;
   ballQuantity: number;
   tubeBrandId: string | null;
@@ -66,6 +68,10 @@ export const CondominiumPaymentEntity = new EntitySchema<CondominiumPayment>({
     },
     status: {
       type: String,
+    },
+    isArchived: {
+      type: Boolean,
+      default: false,
     },
     amountInCents: {
       type: Number,

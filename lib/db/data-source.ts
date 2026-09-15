@@ -29,7 +29,7 @@ declare global {
     | undefined;
 }
 
-const DATA_SOURCE_SCHEMA_VERSION = "2026-08-19-suggestions";
+const DATA_SOURCE_SCHEMA_VERSION = "2026-09-15-manual-sales";
 
 const entities = [
   AdministratorEntity,

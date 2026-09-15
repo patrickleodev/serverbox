@@ -1,10 +1,16 @@
 ﻿import { getDataSource } from "@/lib/db/data-source";
+import {
+  BallInventoryMovementEntity,
+  BallMovementKind,
+} from "@/lib/db/entities/ball-inventory-movement.entity";
 import { CondominiumEntity } from "@/lib/db/entities/condominium.entity";
 import type { Repository } from "typeorm";
 import crypto from "node:crypto";
 import {
   CondominiumPaymentEntity,
+  PaymentMethod,
   PaymentStatus,
+  PaymentVerificationSource,
   type CondominiumPayment,
 } from "@/lib/db/entities/condominium-payment.entity";
 import {
@@ -55,6 +61,13 @@ type CreateStandalonePurchaseOfferInput = {
 type CreateStandalonePaymentFromOfferInput = {
   condominiumId: string;
   standalonePurchaseId: string;
+};
+
+type CreateManualSaleInput = {
+  condominiumId: string;
+  tubeBrandId: string;
+  ballQuantity: number;
+  amountInCents: number;
 };
 
 function getDefaultPaymentCustomerCellphone() {
@@ -369,6 +382,112 @@ export async function createCondominiumPayment({
     verifiedAt: null,
     verificationSource: null,
   });
+}
+
+export async function createManualSale({
+  condominiumId,
+  tubeBrandId,
+  ballQuantity,
+  amountInCents,
+}: CreateManualSaleInput) {
+  const requestedTubeBrandId = tubeBrandId.trim();
+
+  if (!condominiumId) {
+    throw new Error("Condomínio é obrigatório para registrar venda manual.");
+  }
+
+  if (!requestedTubeBrandId) {
+    throw new Error("Marca de tubos é obrigatória para registrar venda manual.");
+  }
+
+  if (!Number.isFinite(ballQuantity) || ballQuantity <= 0 || !Number.isInteger(ballQuantity)) {
+    throw new Error("Quantidade de tubos inválida.");
+  }
+
+  if (!Number.isFinite(amountInCents) || amountInCents <= 0) {
+    throw new Error("Valor em centavos inválido.");
+  }
+
+  const dataSource = await getDataSource();
+  const condominiumRepository = dataSource.getRepository(CondominiumEntity);
+  const paymentRepository = dataSource.getRepository(CondominiumPaymentEntity);
+  const movementRepository = dataSource.getRepository(BallInventoryMovementEntity);
+  const condominium = await condominiumRepository.findOne({
+    where: { id: condominiumId },
+    relations: {
+      courtDetails: { tubeBrand: true, tubeBrands: true },
+      payments: true,
+    },
+  });
+
+  if (!condominium) {
+    throw new Error("Condomínio não encontrado.");
+  }
+
+  await expirePendingPaymentsIfNeeded(paymentRepository, condominium.payments);
+
+  const tubeBrandStock = getCondominiumTubeBrandStock(
+    condominium,
+    requestedTubeBrandId,
+  );
+
+  if (!tubeBrandStock) {
+    throw new Error("Marca de tubos indisponível para venda manual.");
+  }
+
+  const tubeBrandName = getActiveTubeBrandName(condominium, requestedTubeBrandId);
+  const stockQuantity = getCondominiumStockQuantity(condominium);
+  const remainingBallStock = calculateRemainingBallStock({
+    stockQuantity,
+    payments: condominium.payments,
+  });
+  const remainingBrandStock = calculateRemainingBallStock({
+    stockQuantity: tubeBrandStock.quantity,
+    payments: condominium.payments,
+    tubeBrandId: requestedTubeBrandId,
+  });
+
+  assertBallStockAvailable({
+    requestedBallQuantity: ballQuantity,
+    remainingBallStock: Math.min(remainingBallStock, remainingBrandStock),
+  });
+
+  const reference = `MANUAL-${buildPaymentReference()}`;
+  const paidAt = new Date();
+  const payment = await paymentRepository.save({
+    condominium,
+    planId: null,
+    planName: "Venda manual",
+    reference,
+    method: PaymentMethod.MANUAL,
+    status: PaymentStatus.PAID,
+    amountInCents,
+    ballQuantity,
+    tubeBrandId: requestedTubeBrandId,
+    tubeBrandName,
+    provider: null,
+    providerPaymentId: null,
+    providerRawStatus: null,
+    providerReceiptUrl: null,
+    providerDevMode: null,
+    pixTransactionId: null,
+    pixQrCode: null,
+    pixCopyPasteCode: null,
+    pixExpiresAt: null,
+    paidAt,
+    verifiedAt: paidAt,
+    verificationSource: PaymentVerificationSource.MANUAL_REVIEW,
+  });
+
+  await movementRepository.save({
+    condominium,
+    payment,
+    kind: BallMovementKind.CREDIT,
+    quantity: ballQuantity,
+    reason: `Venda manual registrada para o pagamento ${reference}.`,
+  });
+
+  return payment;
 }
 
 export async function createStandalonePurchaseOffer({

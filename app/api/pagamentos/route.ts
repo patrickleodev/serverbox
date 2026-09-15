@@ -56,6 +56,7 @@ export async function GET() {
       id: payment.id,
       reference: payment.reference,
       status: payment.status,
+      isArchived: payment.isArchived,
       method: payment.method,
       amountInCents: payment.amountInCents,
       ballQuantity: payment.ballQuantity,

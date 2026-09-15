@@ -8,8 +8,10 @@ import { SalesCharts } from "@/app/dashboard/[condominiumId]/_components/sales-c
 import { SubmitButton } from "@/app/dashboard/_components/submit-button";
 import {
   createPaymentAction,
+  createManualSaleAction,
   createStandalonePurchaseAction,
   openStandalonePurchasePaymentAction,
+  togglePaymentArchiveAction,
 } from "@/app/dashboard/actions";
 import { getAdminCondominiumDetails } from "@/lib/data/admin-dashboard";
 
@@ -196,11 +198,25 @@ export default async function CondominiumDashboardPage({
                         {payment.tubeBrandName ? ` - ${payment.tubeBrandName}` : ""}
                       </p>
                     </div>
-                    <div className="text-right text-xs uppercase tracking-[0.18em] text-slate-500">
-                      <p>{payment.status}</p>
+                    <div className="flex flex-col items-end gap-3 text-right text-xs uppercase tracking-[0.18em] text-slate-500">
+                      <p>{payment.isArchived ? "arquivada" : payment.status}</p>
                       <p className="mt-2 normal-case tracking-normal text-slate-600">
                         {dateFormatter.format(payment.createdAt)}
                       </p>
+                      <form action={togglePaymentArchiveAction}>
+                        <SessionTokenInput />
+                        <input type="hidden" name="paymentId" value={payment.id} />
+                        <input
+                          type="hidden"
+                          name="isArchived"
+                          value={String(!payment.isArchived)}
+                        />
+                        <SubmitButton
+                          idleLabel={payment.isArchived ? "Restaurar" : "Arquivar"}
+                          pendingLabel="Salvando..."
+                          className="inline-flex h-9 items-center justify-center rounded-full border border-slate-300 bg-white px-4 text-xs font-semibold uppercase tracking-[0.12em] text-slate-700 transition hover:border-slate-900 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-60"
+                        />
+                      </form>
                     </div>
                   </div>
                 </article>
@@ -217,16 +233,16 @@ export default async function CondominiumDashboardPage({
               Cobranças
             </p>
             <h2 className="mt-2 text-2xl font-semibold text-slate-900">
-              Criar cobrança para este condomínio
+              Criar cobrança ou registrar venda
             </h2>
           </div>
           <p className="max-w-2xl text-sm leading-7 text-slate-600">
-            O saldo de tubos só entra como confirmado depois que o pagamento for
-            aprovado.
+            Use o checkout para pagamentos online ou registre vendas recebidas
+            fora do QR Code.
           </p>
         </div>
 
-        <div className="mt-6 grid gap-6 xl:grid-cols-2">
+        <div className="mt-6 grid gap-6 xl:grid-cols-3">
           <section className="rounded-[1.25rem] border border-border bg-slate-50 p-5">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
@@ -370,6 +386,73 @@ export default async function CondominiumDashboardPage({
                 ))
               )}
             </div>
+          </section>
+
+          <section className="rounded-[1.25rem] border border-border bg-slate-50 p-5">
+            <h3 className="text-xl font-semibold text-slate-900">
+              Venda manual
+            </h3>
+            <p className="mt-2 text-sm leading-7 text-slate-600">
+              Registre uma venda recebida fora do QR Code. Ela entra como paga e
+              consome o estoque imediatamente.
+            </p>
+
+            <form action={createManualSaleAction} className="mt-6 space-y-4">
+              <SessionTokenInput />
+              <input type="hidden" name="condominiumId" value={condominium.id} />
+
+              <label className="block space-y-2">
+                <span className="text-sm font-medium text-slate-700">
+                  Marca do tubo
+                </span>
+                <select
+                  name="tubeBrandId"
+                  disabled={!canCreateStandalonePayment}
+                  defaultValue={defaultTubeBrandId}
+                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none"
+                >
+                  {condominium.tubeStockByBrand.length > 0 ? (
+                    condominium.tubeStockByBrand.map((entry) => (
+                      <option key={entry.tubeBrandId} value={entry.tubeBrandId}>
+                        {entry.tubeBrandName} - {entry.quantity} tubos
+                      </option>
+                    ))
+                  ) : (
+                    <option value="">Sem marcas com estoque ativo</option>
+                  )}
+                </select>
+              </label>
+
+              <FloatingInput
+                label="Quantidade de tubos"
+                name="ballQuantity"
+                type="number"
+                min={1}
+                max={condominium.remainingBallStock || undefined}
+                defaultValue={defaultStandaloneBallQuantity}
+                placeholder="Quantidade de tubos"
+                className="bg-white"
+              />
+              <CurrencyInput
+                label="Valor recebido"
+                name="amountInCents"
+                defaultValueInCents={defaultStandaloneAmountInCents}
+                className="bg-white"
+              />
+
+              <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm leading-7 text-slate-700">
+                {canCreateStandalonePayment
+                  ? "A venda será registrada como paga, sem criar checkout ou cobrança pendente."
+                  : "Atualize o estoque real do condomínio para habilitar vendas manuais."}
+              </div>
+
+              <SubmitButton
+                idleLabel="Registrar venda manual"
+                pendingLabel="Registrando..."
+                disabled={!canCreateStandalonePayment}
+                className="inline-flex h-12 w-full items-center justify-center rounded-full bg-slate-900 px-5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+              />
+            </form>
           </section>
 
           <section className="rounded-[1.25rem] border border-border bg-slate-50 p-5">

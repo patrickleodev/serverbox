@@ -520,6 +520,7 @@ export async function getAdminCondominiumDetails(condominiumId: string) {
       id: payment.id,
       reference: payment.reference,
       status: payment.status,
+      isArchived: payment.isArchived,
       planName: payment.planName || "Plano antigo",
       amountInCents: payment.amountInCents,
       ballQuantity: payment.ballQuantity,

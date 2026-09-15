@@ -12,6 +12,7 @@ type StockPayment = Pick<
   | "planId"
   | "planName"
   | "status"
+  | "isArchived"
   | "amountInCents"
   | "ballQuantity"
   | "tubeBrandId"
@@ -59,11 +60,19 @@ export function hasPendingPaymentExpired(payment: Pick<StockPayment, "status" | 
   );
 }
 
-export function isOpenPendingPayment(payment: Pick<StockPayment, "status" | "pixExpiresAt">) {
-  return payment.status === PaymentStatus.PENDING && !hasPendingPaymentExpired(payment);
+export function isOpenPendingPayment(
+  payment: Pick<StockPayment, "status" | "isArchived" | "pixExpiresAt">,
+) {
+  return (
+    !payment.isArchived &&
+    payment.status === PaymentStatus.PENDING &&
+    !hasPendingPaymentExpired(payment)
+  );
 }
 
-export function isStockCommitment(payment: Pick<StockPayment, "status" | "pixExpiresAt">) {
+export function isStockCommitment(
+  payment: Pick<StockPayment, "status" | "isArchived" | "pixExpiresAt">,
+) {
   return payment.status === PaymentStatus.PAID || isOpenPendingPayment(payment);
 }
 

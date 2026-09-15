@@ -4,8 +4,11 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { requireAuthenticatedAdminFromFormData } from "@/lib/auth/session";
+import { getDataSource } from "@/lib/db/data-source";
+import { CondominiumPaymentEntity } from "@/lib/db/entities/condominium-payment.entity";
 import {
   createCondominiumPayment,
+  createManualSale,
   createStandaloneBallPaymentFromOffer,
   createStandaloneBallPayment,
   createStandalonePurchaseOffer,
@@ -115,6 +118,34 @@ export async function createPaymentAction(formData: FormData) {
   redirect(`/pagamentos/${paymentId}`);
 }
 
+export async function togglePaymentArchiveAction(formData: FormData) {
+  await requireAuthenticatedAdminFromFormData(formData);
+
+  const paymentId = String(formData.get("paymentId") ?? "").trim();
+  const isArchived = String(formData.get("isArchived") ?? "") === "true";
+
+  if (!paymentId) {
+    throw new Error("Cobrança inválida.");
+  }
+
+  const dataSource = await getDataSource();
+  const paymentRepository = dataSource.getRepository(CondominiumPaymentEntity);
+  const payment = await paymentRepository.findOne({
+    where: { id: paymentId },
+    relations: { condominium: true },
+  });
+
+  if (!payment) {
+    throw new Error("Cobrança não encontrada.");
+  }
+
+  payment.isArchived = isArchived;
+  await paymentRepository.save(payment);
+
+  revalidatePath("/dashboard");
+  revalidatePath(`/condominio/${payment.condominium.id}`);
+}
+
 export async function createStandalonePaymentAction(formData: FormData) {
   await requireAuthenticatedAdminFromFormData(formData);
 
@@ -155,6 +186,31 @@ export async function createStandalonePaymentAction(formData: FormData) {
   revalidatePath("/dashboard");
   revalidatePath(`/condominio/${condominiumId}`);
   redirect(`/pagamentos/${paymentId}`);
+}
+
+export async function createManualSaleAction(formData: FormData) {
+  await requireAuthenticatedAdminFromFormData(formData);
+
+  const condominiumId = String(formData.get("condominiumId") ?? "");
+  const tubeBrandId = String(formData.get("tubeBrandId") ?? "");
+  const ballQuantity = parsePositiveInteger(
+    formData.get("ballQuantity"),
+    "Quantidade de tubos",
+  );
+  const amountInCents = parseCurrencyToCents(
+    formData.get("amountInCents"),
+    "Valor",
+  );
+
+  await createManualSale({
+    condominiumId,
+    tubeBrandId,
+    ballQuantity,
+    amountInCents,
+  });
+
+  revalidatePath("/dashboard");
+  revalidatePath(`/condominio/${condominiumId}`);
 }
 
 export async function createStandalonePurchaseAction(formData: FormData) {
